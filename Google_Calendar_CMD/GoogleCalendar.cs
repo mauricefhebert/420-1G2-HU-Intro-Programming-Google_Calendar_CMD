@@ -4,6 +4,7 @@ using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -13,8 +14,9 @@ namespace Google_Calendar_CMD
     {
         public static string[] Scopes = { CalendarService.Scope.Calendar };
         public static string ApplicationName = "CalendarConsole";
-
         private string CredentialsPath = string.Empty;
+        //This will replace the "primary" calendar by a variable of the user choice
+        //private string CalendarInUseId;
 
         public GoogleCalendar(string credentialsPath)
         {
@@ -39,13 +41,10 @@ namespace Google_Calendar_CMD
             newEvent = service.Events.Insert(newEvent, calendarId).Execute();
             Console.WriteLine($"{newEvent.HtmlLink}");
         }
-
         //SHOW EVENT
         public void ShowUpCommingEvent()
         {
             UserCredential credential = GetCredential(UserRole.User);
-
-            // Creat Google Calendar API service.
             CalendarService service = GetService(credential);
 
             // Define parameters of request
@@ -78,10 +77,32 @@ namespace Google_Calendar_CMD
             {
                 Console.WriteLine("Nothing.");
             }
+            Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
+        //SELECT CALENDAR
+        public void SelectCalendar()
+        {
+            UserCredential credential = GetCredential(UserRole.Admin);
+            CalendarService service = GetService(credential);
 
+            String pageToken = null;
+            do
+            {
+                CalendarList calendarList = service.CalendarList.List().Execute();
+                
+                List<CalendarListEntry> items = (List<CalendarListEntry>)calendarList.Items;
 
+                foreach (CalendarListEntry calendarListEntry in items)
+                {
+                    Console.WriteLine($"Calendar Title: {calendarListEntry.Summary}\n Calendar ID: {calendarList.}");
+                }
+                pageToken = calendarList.NextPageToken;
+            } while (pageToken != null);
+
+            Console.WriteLine("Press enter to exit...");
+            Console.ReadLine();
+        }
 
 
         /*--------------------------------------------------------------------------------*/

@@ -11,14 +11,8 @@ namespace Google_Calendar_CMD
 
         static void Main(string[] args)
         {
-
             Menu.AfficherMenu();
             Menu.SelectionMenu();
-
-
-
-
-            //gCalendar.CreateEvent();
         }
     }
 }
