@@ -22,6 +22,31 @@ namespace Google_Calendar_CMD
             Console.WriteLine($"6 - Quitter");
         }
 
+        public static void EndMenu()
+        {
+            Console.WriteLine("\n---MENU FINAL---");
+            Console.WriteLine($"1 - Menu principal");
+            Console.WriteLine($"2 - Quitter");
+            Console.Write("Que voulez-vous faire?: ");
+            string menuFianlChoix = Console.ReadLine();
+            switch (menuFianlChoix)
+            {
+                case "1":
+                    Console.Clear();
+                    AfficherMenu();
+                    SelectionMenu();
+                    break;
+                case "2":
+                    Environment.Exit(0);
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Choix Invalid veuillez selection parmi la liste");
+                    EndMenu();
+                    break;
+            }
+        }
+
         public static void SelectionMenu()
         {
             GoogleCalendar gCalendar = new GoogleCalendar(credentialsPath);
@@ -33,14 +58,17 @@ namespace Google_Calendar_CMD
                 case "1":
                     Console.Clear();
                     gCalendar.CreateEvent();
+                    EndMenu();
                     break;
                 case "2":
                     Console.Clear();
                     gCalendar.DeleteEvent();
+                    EndMenu();
                     break;
                 case "3":
                     Console.Clear();
                     gCalendar.ShowUpCommingEvent();
+                    EndMenu();
                     break;
                 case "4":
                     Console.Clear();
@@ -48,6 +76,7 @@ namespace Google_Calendar_CMD
                 case "5":
                     Console.Clear();
                     gCalendar.SelectCalendar();
+                    EndMenu();
                     break;
                 case "6":
                     Environment.Exit(0);
