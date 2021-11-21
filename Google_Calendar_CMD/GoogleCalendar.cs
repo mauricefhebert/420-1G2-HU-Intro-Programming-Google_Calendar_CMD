@@ -28,12 +28,12 @@ namespace Google_Calendar_CMD
         {
             UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
-            
+
             Console.Write("Entrée un titre: ");
             string titre = Console.ReadLine();
             Console.Write("Entrée une date de début (yyyy-mm-dd): ");
             string dateDebut = Console.ReadLine().Trim();
-            if(!dateDebut.Contains("-"))
+            if (!dateDebut.Contains("-"))
             {
                 Console.WriteLine("Format de date invalide veuillez suivre le format yyyy-mm-dd incluent les trait");
                 Console.Write("Entrée une date de début (yyyy-mm-dd): ");
@@ -97,7 +97,7 @@ namespace Google_Calendar_CMD
 
             Console.WriteLine("Étez-vous certain de vouloir supprimer cette evenement? o/n: ");
             string ConfirmationSuppresion = Console.ReadLine().ToLower().Trim();
-            if(ConfirmationSuppresion == "o")
+            if (ConfirmationSuppresion == "o")
             {
                 service.Events.Delete(CalendarInUseId, idASupprimer).Execute();
             }
@@ -132,7 +132,7 @@ namespace Google_Calendar_CMD
                     {
                         date = eventItem.Start.Date;
                     }
-                    if(!string.IsNullOrEmpty(description))
+                    if (!string.IsNullOrEmpty(description))
                     {
                         description = $"Description : {eventItem.Description}\n";
                     }
@@ -144,11 +144,54 @@ namespace Google_Calendar_CMD
             {
                 Console.WriteLine("No Upcoming Event.");
             }
-            if(ShowEventStayOn == true)
+            if (ShowEventStayOn == true)
             {
                 Console.Write("Appuyer sur entrée pour continue...");
                 Console.ReadLine();
             }
+        }
+        //SEARCH EVENT
+        public void SearchEvent()
+        {
+            UserCredential credential = GetCredential(UserRole.User);
+            CalendarService service = GetService(credential);
+
+            // Define parameters of request
+            EventsResource.ListRequest request = service.Events.List(CalendarInUseId);
+            request.TimeMin = DateTime.Now;
+            request.ShowDeleted = false;
+            request.SingleEvents = true;
+            request.MaxResults = 10;
+            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
+
+            // List events.
+            Events events = request.Execute();
+
+            Console.Write("Rechercher un evenement par titre: ");
+            string search = Console.ReadLine().ToLower().Trim();
+            foreach (var eventItem in events.Items)
+            {
+                string date = eventItem.Start.DateTime.ToString();
+                string description = eventItem.Description;
+                if (string.IsNullOrEmpty(date))
+                {
+                    date = eventItem.Start.Date;
+                }
+                if (!string.IsNullOrEmpty(description))
+                {
+                    description = $"Description : {eventItem.Description}\n";
+                }
+                if (eventItem.Summary.ToLower().Contains(search))
+                {
+                    Console.WriteLine($"Titre: {eventItem.Summary}\nDate: {date}\nHeurs de début: \nHeurs de fin: \n{description}ID: {eventItem.Id}\n");
+                }
+            }
+            if (ShowEventStayOn == true)
+            {
+                Console.Write("Appuyer sur entrée pour continue...");
+                Console.ReadLine();
+            }
+
         }
         //SELECT CALENDAR
         public void SelectCalendar()

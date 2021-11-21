@@ -72,6 +72,8 @@ namespace Google_Calendar_CMD
                     break;
                 case "4":
                     Console.Clear();
+                    gCalendar.SearchEvent();
+                    EndMenu();
                     break;
                 case "5":
                     Console.Clear();

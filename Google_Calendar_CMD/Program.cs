@@ -11,11 +11,11 @@ namespace Google_Calendar_CMD
 
         static void Main(string[] args)
         {
-            if(!File.Exists(GoogleCalendar.calendarIdSaveFile))
+            if (!File.Exists(GoogleCalendar.calendarIdSaveFile))
             {
-            File.Create(GoogleCalendar.calendarIdSaveFile);
+                File.Create(GoogleCalendar.calendarIdSaveFile);
             }
-            
+
             Menu.AfficherMenu();
             Menu.SelectionMenu();
         }
