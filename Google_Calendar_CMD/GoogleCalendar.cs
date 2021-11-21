@@ -106,7 +106,7 @@ namespace Google_Calendar_CMD
         //SHOW EVENT
         public void ShowUpCommingEvent()
         {
-            UserCredential credential = GetCredential(UserRole.User);
+            UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
 
             // Define parameters of request
@@ -153,7 +153,7 @@ namespace Google_Calendar_CMD
         //SEARCH EVENT
         public void SearchEvent()
         {
-            UserCredential credential = GetCredential(UserRole.User);
+            UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
 
             // Define parameters of request
@@ -200,7 +200,7 @@ namespace Google_Calendar_CMD
             ShowEventStayOn = false;
             UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
-            String pageToken = null;
+            string pageToken = null;
             do
             {
                 CalendarList calendarList = service.CalendarList.List().Execute();

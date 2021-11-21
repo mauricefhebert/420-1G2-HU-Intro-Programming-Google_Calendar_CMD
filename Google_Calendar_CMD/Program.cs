@@ -11,7 +11,7 @@ namespace Google_Calendar_CMD
 
         static void Main(string[] args)
         {
-            if (!File.Exists(GoogleCalendar.calendarIdSaveFile))
+            if (!File.Exists(GoogleCalendar.calendarIdSaveFile) || GoogleCalendar.calendarIdSaveFile.Contains(""))
             {
                 File.WriteAllText(GoogleCalendar.calendarIdSaveFile, "primary");
             }
