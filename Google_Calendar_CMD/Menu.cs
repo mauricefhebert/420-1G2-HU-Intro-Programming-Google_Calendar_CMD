@@ -16,11 +16,10 @@ namespace Google_Calendar_CMD
             Console.WriteLine($"-----MENU-----");
             Console.WriteLine($"1 - Ajouter un evenement");
             Console.WriteLine($"2 - Supprimer un evenement");
-            Console.WriteLine($"3 - Supprimer tout les evenements");
-            Console.WriteLine($"4 - Afficher les evenements");
-            Console.WriteLine($"5 - Rechercher un evenement");
-            Console.WriteLine($"6 - Changer de calendrier");
-            Console.WriteLine($"7 - Quitter");
+            Console.WriteLine($"3 - Afficher les evenements");
+            Console.WriteLine($"4 - Rechercher un evenement");
+            Console.WriteLine($"5 - Changer de calendrier");
+            Console.WriteLine($"6 - Quitter");
         }
 
         public static void SelectionMenu()
@@ -41,19 +40,16 @@ namespace Google_Calendar_CMD
                     break;
                 case "3":
                     Console.Clear();
+                    gCalendar.ShowUpCommingEvent();
                     break;
                 case "4":
                     Console.Clear();
-                    gCalendar.ShowUpCommingEvent();
                     break;
                 case "5":
                     Console.Clear();
-                    break;
-                case "6":
-                    Console.Clear();
                     gCalendar.SelectCalendar();
                     break;
-                case "7":
+                case "6":
                     Environment.Exit(0);
                     break;
                 default:

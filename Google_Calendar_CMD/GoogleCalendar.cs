@@ -16,14 +16,13 @@ namespace Google_Calendar_CMD
         public static string ApplicationName = "CalendarConsole";
         private string CredentialsPath = string.Empty;
         //This will replace the "primary" calendar by a variable of the user choice
-        //private string CalendarInUseId;
+        public static string calendarIdSaveFile = "./calenderID.txt";
+        private string CalendarInUseId = File.ReadAllText(calendarIdSaveFile);
         private bool ShowEventStayOn = true;
-
         public GoogleCalendar(string credentialsPath)
         {
             CredentialsPath = credentialsPath;
         }
-
         //CREATE EVENT
         public void CreateEvent()
         {
@@ -81,7 +80,7 @@ namespace Google_Calendar_CMD
                 },
             };
 
-            string calendarId = "primary";
+            string calendarId = CalendarInUseId;
 
             newEvent = service.Events.Insert(newEvent, calendarId).Execute();
             Console.WriteLine($"{newEvent.HtmlLink}");
@@ -100,7 +99,7 @@ namespace Google_Calendar_CMD
             string ConfirmationSuppresion = Console.ReadLine().ToLower().Trim();
             if(ConfirmationSuppresion == "o")
             {
-                service.Events.Delete("primary", idASupprimer).Execute();
+                service.Events.Delete(CalendarInUseId, idASupprimer).Execute();
             }
         }
 
@@ -111,11 +110,11 @@ namespace Google_Calendar_CMD
             CalendarService service = GetService(credential);
 
             // Define parameters of request
-            EventsResource.ListRequest request = service.Events.List("primary");
+            EventsResource.ListRequest request = service.Events.List(CalendarInUseId);
             request.TimeMin = DateTime.Now;
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            request.MaxResults = 5;
+            request.MaxResults = 10;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
             // List events.
@@ -135,7 +134,7 @@ namespace Google_Calendar_CMD
                     }
                     if(!string.IsNullOrEmpty(description))
                     {
-                        description = $"Description : {eventItem.Description}";
+                        description = $"Description : {eventItem.Description}\n";
                     }
 
                     Console.WriteLine($"Titre: {eventItem.Summary}\nDate: {date}\nHeurs de début: \nHeurs de fin: \n{description}ID: {eventItem.Id}\n");
@@ -154,9 +153,9 @@ namespace Google_Calendar_CMD
         //SELECT CALENDAR
         public void SelectCalendar()
         {
+            ShowEventStayOn = false;
             UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
-
             String pageToken = null;
             do
             {
@@ -166,12 +165,15 @@ namespace Google_Calendar_CMD
 
                 foreach (CalendarListEntry calendarListEntry in items)
                 {
-                    Console.WriteLine($"Calendar Title: {calendarListEntry.Summary}\n Calendar ID: ");
+                    Console.WriteLine($"Calendar Title: {calendarListEntry.Summary}\nCalendar ID: {calendarListEntry.Id}\n");
 
                 }
                 pageToken = calendarList.NextPageToken;
             } while (pageToken != null);
 
+            Console.Write("Veuillez copier/coller le 'ID' du calendrier a utiliser: ");
+            string calendrierUtiliser = Console.ReadLine().Trim();
+            File.WriteAllText(calendarIdSaveFile, calendrierUtiliser);
             if (ShowEventStayOn == true)
             {
                 Console.Write("Appuyer sur entrée pour continue...");
