@@ -169,6 +169,7 @@ namespace Google_Calendar_CMD
 
             Console.Write("Rechercher un evenement par titre: ");
             string search = Console.ReadLine().ToLower().Trim();
+            Console.WriteLine();
             foreach (var eventItem in events.Items)
             {
                 string date = eventItem.Start.DateTime.ToString();

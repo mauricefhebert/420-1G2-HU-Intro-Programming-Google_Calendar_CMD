@@ -13,9 +13,8 @@ namespace Google_Calendar_CMD
         {
             if (!File.Exists(GoogleCalendar.calendarIdSaveFile))
             {
-                File.Create(GoogleCalendar.calendarIdSaveFile);
+                File.WriteAllText(GoogleCalendar.calendarIdSaveFile, "primary");
             }
-
             Menu.AfficherMenu();
             Menu.SelectionMenu();
         }
