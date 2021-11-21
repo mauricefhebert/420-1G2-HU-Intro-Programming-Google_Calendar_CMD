@@ -17,6 +17,7 @@ namespace Google_Calendar_CMD
         private string CredentialsPath = string.Empty;
         //This will replace the "primary" calendar by a variable of the user choice
         //private string CalendarInUseId;
+        private bool ShowEventStayOn = true;
 
         public GoogleCalendar(string credentialsPath)
         {
@@ -28,12 +29,56 @@ namespace Google_Calendar_CMD
         {
             UserCredential credential = GetCredential(UserRole.Admin);
             CalendarService service = GetService(credential);
+            
+            Console.Write("Entrée un titre: ");
+            string titre = Console.ReadLine();
+            Console.Write("Entrée une date de début (yyyy-mm-dd): ");
+            string dateDebut = Console.ReadLine().Trim();
+            if(!dateDebut.Contains("-"))
+            {
+                Console.WriteLine("Format de date invalide veuillez suivre le format yyyy-mm-dd incluent les trait");
+                Console.Write("Entrée une date de début (yyyy-mm-dd): ");
+                dateDebut = Console.ReadLine().Trim();
+            }
+            Console.Write("Entrée une date de fin (yyyy-mm-dd): ");
+            string dateFin = Console.ReadLine().Trim();
+            if (!dateFin.Contains("-"))
+            {
+                Console.WriteLine("Format de date invalide veuillez suivre le format yyyy-mm-dd incluent les trait (-)");
+                Console.Write("Entrée une date de fin (yyyy-mm-dd): ");
+                dateFin = Console.ReadLine().Trim();
+            }
+            Console.Write("Entrée une heurs de début (hh:mm): ");
+            string heursDebut = Console.ReadLine().Trim();
+            if (!heursDebut.Contains(":"))
+            {
+                Console.WriteLine("Format d'heurs invalide veuillez suivre le format hh:mm incluent le deux point (:)");
+                Console.Write("Entrée une heurs de début (hh:mm): ");
+                heursDebut = Console.ReadLine().Trim();
+            }
+            Console.Write("Entrée une heurs de fin (hh:mm): ");
+            string heursFin = Console.ReadLine().Trim();
+            if (!heursFin.Contains(":"))
+            {
+                Console.WriteLine("Format d'heurs invalide veuillez suivre le format hh:mm incluent le deux point (:)");
+                Console.Write("Entrée une heurs de fin (hh:mm): ");
+                heursFin = Console.ReadLine().Trim();
+            }
+            Console.Write("Entrée une description: ");
+            string description = Console.ReadLine().Trim();
 
             Event newEvent = new Event()
             {
-                Summary = "LIFO Event",
-                Start = new EventDateTime() { DateTime = new DateTime(2018, 10, 20) },
-                End = new EventDateTime() { DateTime = new DateTime(2018, 10, 21) },
+                Summary = titre,
+                Description = description,
+                Start = new EventDateTime()
+                {
+                    DateTime = DateTime.Parse($"{dateDebut}T{heursDebut}:00"),
+                },
+                End = new EventDateTime()
+                {
+                    DateTime = DateTime.Parse($"{dateFin}T{heursFin}:00"),
+                },
             };
 
             string calendarId = "primary";
@@ -41,6 +86,24 @@ namespace Google_Calendar_CMD
             newEvent = service.Events.Insert(newEvent, calendarId).Execute();
             Console.WriteLine($"{newEvent.HtmlLink}");
         }
+        //DELETE EVENT
+        public void DeleteEvent()
+        {
+            ShowEventStayOn = false;
+            UserCredential credential = GetCredential(UserRole.Admin);
+            CalendarService service = GetService(credential);
+            ShowUpCommingEvent();
+            Console.Write("Veuillez copier/coller le 'ID' de l'évenement a supprimer: ");
+            string idASupprimer = Console.ReadLine().Trim();
+
+            Console.WriteLine("Étez-vous certain de vouloir supprimer cette evenement? o/n: ");
+            string ConfirmationSuppresion = Console.ReadLine().ToLower().Trim();
+            if(ConfirmationSuppresion == "o")
+            {
+                service.Events.Delete("primary", idASupprimer).Execute();
+            }
+        }
+
         //SHOW EVENT
         public void ShowUpCommingEvent()
         {
@@ -52,7 +115,7 @@ namespace Google_Calendar_CMD
             request.TimeMin = DateTime.Now;
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            request.MaxResults = 10;
+            request.MaxResults = 5;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
             // List events.
@@ -65,20 +128,28 @@ namespace Google_Calendar_CMD
                 foreach (var eventItem in events.Items)
                 {
                     string date = eventItem.Start.DateTime.ToString();
-                    if (String.IsNullOrEmpty(date))
+                    string description = eventItem.Description;
+                    if (string.IsNullOrEmpty(date))
                     {
                         date = eventItem.Start.Date;
                     }
-                    //Console.WriteLine("{0} ({1})", eventItem.Summary, when);
-                    Console.WriteLine($"Titre: {eventItem.Summary}\nDate: {date}\nHeurs de début: \nHeurs de fin: \n");
+                    if(!string.IsNullOrEmpty(description))
+                    {
+                        description = $"Description : {eventItem.Description}";
+                    }
+
+                    Console.WriteLine($"Titre: {eventItem.Summary}\nDate: {date}\nHeurs de début: \nHeurs de fin: \n{description}ID: {eventItem.Id}\n");
                 }
             }
             else
             {
-                Console.WriteLine("Nothing.");
+                Console.WriteLine("No Upcoming Event.");
             }
-            Console.WriteLine("Press enter to exit...");
-            Console.ReadLine();
+            if(ShowEventStayOn == true)
+            {
+                Console.Write("Appuyer sur entrée pour continue...");
+                Console.ReadLine();
+            }
         }
         //SELECT CALENDAR
         public void SelectCalendar()
@@ -90,18 +161,22 @@ namespace Google_Calendar_CMD
             do
             {
                 CalendarList calendarList = service.CalendarList.List().Execute();
-                
+
                 List<CalendarListEntry> items = (List<CalendarListEntry>)calendarList.Items;
 
                 foreach (CalendarListEntry calendarListEntry in items)
                 {
-                    Console.WriteLine($"Calendar Title: {calendarListEntry.Summary}\n Calendar ID: {calendarList.}");
+                    Console.WriteLine($"Calendar Title: {calendarListEntry.Summary}\n Calendar ID: ");
+
                 }
                 pageToken = calendarList.NextPageToken;
             } while (pageToken != null);
 
-            Console.WriteLine("Press enter to exit...");
-            Console.ReadLine();
+            if (ShowEventStayOn == true)
+            {
+                Console.Write("Appuyer sur entrée pour continue...");
+                Console.ReadLine();
+            }
         }
 
 

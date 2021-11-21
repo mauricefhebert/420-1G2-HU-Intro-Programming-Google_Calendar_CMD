@@ -32,22 +32,25 @@ namespace Google_Calendar_CMD
             switch (userChoice)
             {
                 case "1":
+                    Console.Clear();
                     gCalendar.CreateEvent();
                     break;
                 case "2":
-                    //
+                    Console.Clear();
+                    gCalendar.DeleteEvent();
                     break;
                 case "3":
-                    //
+                    Console.Clear();
                     break;
                 case "4":
                     Console.Clear();
                     gCalendar.ShowUpCommingEvent();
                     break;
                 case "5":
-                    //
+                    Console.Clear();
                     break;
                 case "6":
+                    Console.Clear();
                     gCalendar.SelectCalendar();
                     break;
                 case "7":
